@@ -14,7 +14,6 @@ export class AppComponent {
   title = 'Planificador de Proceso';
 
   programStarted: boolean = false;
-  //procesadores: number = 0;
 
   procesosActuales: Array<Proceso> = [];
   procesosBloqueados: Array<Proceso> = [];
@@ -31,9 +30,9 @@ export class AppComponent {
   ) {}
 
   ngOnInit(): void {
-    setInterval(() => this.verificarProcesosPlanificador(), 500);
-    setInterval(() => this.verificarProcesosCpu(), 500);
-    setInterval(() => this.entradaSalidaPeriodica(), 5000);
+    setInterval(() => this.verificarProcesosPlanificador(), 1000);
+    setInterval(() => this.verificarProcesosCpu(), 1000);
+    //setInterval(() => this.entradaSalidaPeriodica(), 5000);
   }
 
   programForm = this.formBuilder.group({
@@ -57,13 +56,10 @@ export class AppComponent {
       return;
     }
 
-    //this.procesadores = this.programForm.value.procesadores!;
-
     for (let index = 0; index < this.programForm.value.procesadores!; index++) {
       let p: Procesador = new Procesador(index.toString(), null);
       this.cpu.procesadores.push(p);     
     }
-    console.log(this.cpu.procesadores.length)
     this.programStarted = true;
     this.programForm.reset();
   }
@@ -83,7 +79,6 @@ export class AppComponent {
     );
     
     this.procesosActuales.push(proceso);
-    this.procesoForm.reset();
   }
 
   agregarAPlanificador(): void {
@@ -98,9 +93,10 @@ export class AppComponent {
     let insertado = false;
     if (proceso != null) {
       this.cpu.procesadores.forEach(procesador => {
-        if (procesador.procesoActivo == null && !insertado) {
-          proceso.triggerCountdown();
+        if (procesador.procesoActivo == null && !insertado && !proceso.bloqueado) {
+          //proceso.triggerCountdown();
           procesador.procesoActivo = proceso;
+          procesador.triggerProcessingTimer();
           insertado = true;
   
           const index = this.planificador.procesosListos.indexOf(proceso, 0);
@@ -115,13 +111,17 @@ export class AppComponent {
   verificarProcesosCpu(): void {
     this.cpu.procesadores.forEach(procesador => {
       if (procesador.procesoActivo != null) {
-        if (procesador.procesoActivo?.bloqueado) {
-          this.procesosBloqueados.push(procesador.procesoActivo);
-          procesador.procesoActivo = null;        
+        if(procesador.procesoActivo.tiempoEjecucion <= 0) {
+          procesador.procesoActivo = null;   
         }
-        if (procesador.procesoActivo != null) {
-          if(procesador.procesoActivo.tiempoEjecucion <= 0) {
-            procesador.procesoActivo = null;   
+        if (procesador.procesoActivo != null && procesador.procesoActivo.bloqueado) {
+          if (procesador.procesoActivo.bloquedBy == "cpu") {
+            procesador.procesoActivo.bloqueado = false;
+            this.planificador.procesosListos.push(procesador.procesoActivo);
+            procesador.procesoActivo = null;
+          } else {
+            this.procesosBloqueados.push(procesador.procesoActivo);
+            procesador.procesoActivo = null;    
           }
         }
       }
@@ -132,6 +132,7 @@ export class AppComponent {
     this.cpu.procesadores.forEach(procesador => {
       if (proceso === procesador.procesoActivo) {
         procesador.procesoActivo.bloqueado = true;
+        procesador.procesoActivo.bloquedBy = 'usuario';
       }
     });
   }
@@ -140,11 +141,12 @@ export class AppComponent {
     this.procesosBloqueados.forEach(p => {
       if (proceso === p) {
         p.bloqueado = false;
-        const index = this.procesosBloqueados.indexOf(proceso, 0);
+        p.bloquedBy = "";
+        const index = this.procesosBloqueados.indexOf(p, 0);
         if (index > -1) {
           this.procesosBloqueados.splice(index, 1);
         }
-        this.planificador.procesosListos.push(proceso);
+        this.planificador.procesosListos.push(p);
       }
     });
   }
@@ -167,6 +169,7 @@ export class AppComponent {
       let index: number = this.randomIntFromInterval(0, aux.length - 1);
       if ( this.cpu.procesadores[index].procesoActivo != null ) {
         this.cpu.procesadores[index].procesoActivo!.bloqueado = true;
+        this.cpu.procesadores[index].procesoActivo!.bloquedBy = "E/S";
       }
     }
   }

@@ -1,6 +1,7 @@
 export class Proceso {
 
     awake: boolean = false;
+    public bloquedBy: string = "";
 
     constructor(
         public nombre: string,

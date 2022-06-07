@@ -46,8 +46,8 @@
             placeholder="1">
       <br>
       <label>Tipo de Proceso</label>
-        <input name="check" type="radio" value='S.O.' formControlName="tipo" >S.O.
-        <input name="check" type="radio" value='Usuario' formControlName="tipo">Usuario
+        <input name="tipo" type="radio" value='S.O.' formControlName="tipo" >S.O.
+        <input name="tipo" type="radio" value='Usuario' formControlName="tipo">Usuario
       <br>
       <button type="submit" [disabled]="!procesoForm.valid"> Agregar Proceso </button>
       </form>
@@ -60,27 +60,37 @@
   
   <div class="right" *ngIf="programStarted">
     <h1>Procesos Listos: [ {{ planificador.procesosListos.length }} ]</h1>
-    <div class="cont">
-      <div class="lista" *ngFor="let proceso of planificador.procesosListos">
-        <div class="proceso">
-          <p>Nombre: {{ proceso.nombre }}</p>
-          <p>Tipo: {{ proceso.tipo }}</p>
-          <form [formGroup]="priorityForm"
-            (ngSubmit)="cambiarPrioridad(proceso)"
-            autocomplete="off">
-            <p><label>Prioridad: {{ proceso.prioridad }}</label></p>
-            <input type="number"
-              min="1"
-              max="99"
-              formControlName="prioridad"
-              placeholder="{{proceso.prioridad}}">
-            <button type="submit" [disabled]="!priorityForm.valid"> Guardar Prioridad </button>
-          </form>
-          <p>T.Ejecucion: {{ proceso.tiempoEjecucion }}</p>
-          <p>Bloqueado: {{ proceso.bloqueado }}</p>
-          <button *ngIf="proceso.bloqueado" (click)="desbloquear(proceso)">Desloquear</button>
-        </div>
-      </div>
+    <div class="table-container">
+      <table>
+        <tr>
+          <th>Nombre</th>
+          <th>Tipo</th>
+          <th>Prioridad</th>
+          <th>T.Ejecucion</th>
+          <th>Bloquear</th>
+        </tr>
+        <tr *ngFor="let proceso of planificador.procesosListos; let i = index">
+          <td>{{ proceso.nombre }}</td>
+          <td>{{ proceso.tipo }}</td>
+          <td class="p-form">
+            <form [formGroup]="priorityForm"
+              (ngSubmit)="cambiarPrioridad(proceso)"
+              autocomplete="off">
+              <input type="number"
+                min="1"
+                max="99"
+                formControlName="prioridad"
+                placeholder="{{proceso.prioridad}}">
+              <button type="submit" [disabled]="!priorityForm.valid"> Guardar Prioridad </button>
+            </form>
+          </td>
+          <td>{{ proceso.tiempoEjecucion }}</td>
+          <td>
+            {{ proceso.bloqueado }}
+            <button (click)="bloquear(proceso)">Bloquear</button>
+          </td>
+        </tr>
+      </table>
     </div>
   </div>
 </div>
@@ -92,24 +102,18 @@
     <h1>Cantidad de procesadores: [ {{ cpu.procesadores.length }} ]</h1>
     <h2>Procesos en Ejecucion: [ {{ procesosActivos() }} ]</h2>
     <div class="activos">
-      <div *ngFor="let procesador of cpu.procesadores; let i = index">
-        <div *ngIf="procesador.procesoActivo != null" class="proceso">
-          <h3>Core {{ procesador.nombre }}</h3>
-          <p>Nombre: {{ procesador.procesoActivo!.nombre }}</p>
-          <p>Tipo: {{ procesador.procesoActivo!.tipo }}</p>
-          <form [formGroup]="priorityForm"
-            (ngSubmit)="cambiarPrioridad(procesador.procesoActivo!)"
-            autocomplete="off">
-            <p><label>Prioridad: {{ procesador.procesoActivo!.prioridad }}</label></p>
-            <input type="number"
-              min="1"
-              max="99"
-              formControlName="prioridad"
-              placeholder="{{procesador.procesoActivo!.prioridad}}">
-            <button type="submit" [disabled]="!priorityForm.valid"> Guardar Prioridad </button>
-          </form>
-          <p>T.Ejecucion: {{ procesador.procesoActivo!.tiempoEjecucion }}</p>
-          <button (click)="bloquear(procesador.procesoActivo!)">Bloquear</button>
+      <div class="core" 
+           *ngFor="let procesador of cpu.procesadores">
+        <h3>CPU {{ procesador.nombre }}:[ {{procesador.auxTimer}}s ]</h3>
+        <div class="dot" [ngClass]="procesador.procesoActivo != null ? 'proceso-activo' : 'proceso-inactivo'"></div>
+        <div class="p-activos">
+          <div *ngIf="procesador.procesoActivo != null" class="proceso">
+            <p>Nombre: {{ procesador.procesoActivo.nombre }}</p>
+            <p>Tipo: {{ procesador.procesoActivo.tipo }}</p>
+            <p>Prioridad: {{ procesador.procesoActivo.prioridad }}</p>
+            <p>T.Ejecucion: {{ procesador.procesoActivo.tiempoEjecucion }}s</p>
+            <button (click)="bloquear(procesador.procesoActivo!)">Bloquear</button>
+          </div>
         </div>
       </div>
     </div>
@@ -134,6 +138,7 @@
             <button type="submit" [disabled]="!priorityForm.valid"> Guardar Prioridad </button>
           </form>
           <p>T.Ejecucion: {{ proceso.tiempoEjecucion }}</p>
+          <p>Bloqueado por: {{ proceso.bloquedBy }}</p>
           <button (click)="desbloquear(proceso)">Desbloquear</button>
         </div>
       </div>
