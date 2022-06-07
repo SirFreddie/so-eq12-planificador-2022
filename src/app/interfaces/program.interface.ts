@@ -1,4 +1,5 @@
 import { Proceso } from "../classes/Proceso";
+import { Procesador } from '../classes/Procesador';
 
 export interface IProceso {
     nombre: string;
@@ -9,7 +10,7 @@ export interface IProceso {
 
 export interface CPU {
     nombre: string;
-    procesosActivos: Array<Proceso>;
+    procesadores: Array<Procesador>;
 }
 
 export interface IPlanificador {

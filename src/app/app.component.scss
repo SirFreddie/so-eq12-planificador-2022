@@ -1,4 +1,5 @@
 .sect {
+    margin-left: 20px;
     width: 100%;
     height: 500px;
     display: flex;
@@ -6,6 +7,9 @@
 
 .left {
     width: 50%;
+    button {
+        margin-bottom: 15px;
+    }
 }
 
 .right {
@@ -33,5 +37,18 @@
 .proceso {
     width: auto;
     height: auto;
-    background-color: pink;
+    background-color: steelblue;
+    margin-bottom: 15px;
+    label {
+        margin-bottom: 0px;
+    }
+}
+
+input {
+    margin-right: 5px;
+}
+
+label {
+    margin-right: 15px;
+    margin-bottom: 15px;
 }

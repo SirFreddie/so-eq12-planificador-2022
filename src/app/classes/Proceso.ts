@@ -1,19 +1,22 @@
 export class Proceso {
+
+    awake: boolean = false;
+
     constructor(
         public nombre: string,
         public prioridad: number,
         public tiempoEjecucion: number,
         public bloqueado: boolean,
-    ) {
-        //this.autoBlock();
-    }
+        public tipo: string,
+    ) { }
 
-    public triggerCountdown(): void {
-        setInterval(() => this.countDown(), 1000);
-    }
-
-    autoBlock(): void {
-        setInterval(() => this.bloqueado = true, this.tiempoEjecucion*1000);
+    public async triggerCountdown(): Promise<void> {
+        const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
+        this.awake = true;
+        while (this.awake) {
+            await delay(1000);
+            this.countDown();
+        }
     }
 
     countDown(): void {
@@ -22,6 +25,8 @@ export class Proceso {
             if (this.tiempoEjecucion <= 0) {
                 this.tiempoEjecucion = 0;
             }
+        } else {
+            this.awake = false;
         }
     }
 } 
