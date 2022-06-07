@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Proceso, Planificador, CPU } from './interfaces/program.interface';
+import { Planificador } from './classes/Planificador';
+import { Proceso } from './classes/Proceso';
+import { CPU } from './interfaces/program.interface';
 
 @Component({
   selector: 'app-root',
@@ -8,16 +10,15 @@ import { Proceso, Planificador, CPU } from './interfaces/program.interface';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title = 'planificador';
+  title = 'Planificador de Proceso';
 
   programStarted: boolean = false;
   procesadores: number = 0;
 
   procesosActuales: Array<Proceso> = [];
+  procesosBloqueados: Array<Proceso> = [];
 
-  planificador: Planificador = {
-    procesosListos: []
-  }
+  planificador: Planificador = new Planificador([]);
 
   cpu: CPU = {
     nombre: "CPU Principal",
@@ -29,8 +30,8 @@ export class AppComponent {
   ) {}
 
   ngOnInit(): void {
-    setInterval(() => this.verificarProcesosPlanificador(), 2000);
-    setInterval(() => this.verificarProcesosCpu(), 2000);
+    setInterval(() => this.verificarProcesosPlanificador(), 500);
+    setInterval(() => this.verificarProcesosCpu(), 500);
   }
 
   programForm = this.formBuilder.group({
@@ -60,12 +61,12 @@ export class AppComponent {
       return;
     }
 
-    let proceso: Proceso = {
-      nombre: this.procesoForm.value.nombre!,
-      prioridad: this.procesoForm.value.prioridad!,
-      tiempoEjecucion: this.procesoForm.value.tiempoEjecucion!,
-      bloqueado: false
-    }
+    let proceso: Proceso = new Proceso (
+      this.procesoForm.value.nombre!,
+      this.procesoForm.value.prioridad!,
+      this.procesoForm.value.tiempoEjecucion!,
+      false
+    );
     
     this.procesosActuales.push(proceso);
     this.procesoForm.reset();
@@ -80,7 +81,8 @@ export class AppComponent {
 
   verificarProcesosPlanificador(): void {
     this.planificador.procesosListos.forEach(proceso => {
-      if (this.cpu.procesosActivos.length < this.procesadores) {
+      if (this.cpu.procesosActivos.length < this.procesadores && !proceso.bloqueado) {
+        proceso.triggerCountdown();
         this.cpu.procesosActivos.push(proceso);
         const index = this.planificador.procesosListos.indexOf(proceso, 0);
         if (index > -1) {
@@ -97,7 +99,13 @@ export class AppComponent {
         if (index > -1) {
           this.cpu.procesosActivos.splice(index, 1);
         }
-        this.planificador.procesosListos.push(proceso);
+        this.procesosBloqueados.push(proceso);
+      }
+      if(proceso.tiempoEjecucion <= 0) {
+        const index = this.cpu.procesosActivos.indexOf(proceso, 0);
+        if (index > -1) {
+          this.cpu.procesosActivos.splice(index, 1);
+        }
       }
     });
   }
@@ -111,9 +119,14 @@ export class AppComponent {
   }
 
   desbloquear(proceso: Proceso): void {
-    this.planificador.procesosListos.forEach(p => {
+    this.procesosBloqueados.forEach(p => {
       if (proceso === p) {
         p.bloqueado = false;
+        const index = this.procesosBloqueados.indexOf(proceso, 0);
+        if (index > -1) {
+          this.procesosBloqueados.splice(index, 1);
+        }
+        this.planificador.procesosListos.push(proceso);
       }
     });
   }

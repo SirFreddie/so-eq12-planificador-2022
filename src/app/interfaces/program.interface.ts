@@ -1,4 +1,6 @@
-export interface Proceso {
+import { Proceso } from "../classes/Proceso";
+
+export interface IProceso {
     nombre: string;
     prioridad: number;
     tiempoEjecucion: number;
@@ -10,6 +12,6 @@ export interface CPU {
     procesosActivos: Array<Proceso>;
 }
 
-export interface Planificador {
+export interface IPlanificador {
     procesosListos: Array<Proceso>;
 }

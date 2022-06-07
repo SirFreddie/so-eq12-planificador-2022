@@ -1,4 +1,4 @@
-<h1>Planificador de Procesos</h1>
+<h1>{{ title }}s</h1>
 <h3 *ngIf="programStarted">Programa en ejecucion...</h3>
 <hr>
 
@@ -76,15 +76,35 @@
 
 <hr>
 
-<div *ngIf="programStarted">
-  <h1>Cantidad de procesadores: [ {{ procesadores }} ]</h1>
-  <h2>Procesos en Ejecucion: [ {{ cpu.procesosActivos.length }} ]</h2>
-  <div class="activos" *ngFor="let proceso of cpu.procesosActivos">
-    <div class="proceso">
-      <p>Nombre: {{ proceso.nombre }}</p>
-      <p>Prioridad: {{ proceso.prioridad }}</p>
-      <p>T.Ejecucion: {{ proceso.tiempoEjecucion }}</p>
-      <button (click)="bloquear(proceso)">Bloquear</button>
+<div class="sect">
+  <div class="left" *ngIf="programStarted">
+    <h1>Cantidad de procesadores: [ {{ procesadores }} ]</h1>
+    <h2>Procesos en Ejecucion: [ {{ cpu.procesosActivos.length }} ]</h2>
+    <div class="activos">
+      <div *ngFor="let proceso of cpu.procesosActivos; let i = index">
+        <div class="proceso">
+          <h3>Core {{i}}</h3>
+          <p>Nombre: {{ proceso.nombre }}</p>
+          <p>Prioridad: {{ proceso.prioridad }}</p>
+          <p>T.Ejecucion: {{ proceso.tiempoEjecucion }}</p>
+          <button (click)="bloquear(proceso)">Bloquear</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="right" *ngIf="programStarted">
+    <h1>Cantidad de Bloqueados: [ {{ procesosBloqueados.length }} ]</h1>
+    <div class="activos">
+      <div *ngFor="let proceso of procesosBloqueados">
+        <div class="proceso">
+          <p>Nombre: {{ proceso.nombre }}</p>
+          <p>Prioridad: {{ proceso.prioridad }}</p>
+          <p>T.Ejecucion: {{ proceso.tiempoEjecucion }}</p>
+          <button (click)="desbloquear(proceso)">Desbloquear</button>
+        </div>
+      </div>
     </div>
   </div>
 </div>
+
