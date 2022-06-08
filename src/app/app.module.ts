@@ -4,12 +4,10 @@ import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { ProcessCardComponent } from './components/process-card/process-card.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    ProcessCardComponent,
   ],
   imports: [
     BrowserModule,

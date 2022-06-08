@@ -1,25 +1,28 @@
-import { Proceso } from "./Proceso";
+import { Proceso } from './Proceso';
 
 export class Procesador {
 
     public awake: boolean = false;
-    public tiempoProceso: number = 5; 
-    public auxTimer: number = 5;
+    public auxTimer: number = 0;
+    public procesoActivo: Proceso | null = null;
 
     constructor(
         public nombre: string,
-        public procesoActivo: Proceso | null
-    ) {}
+        public tiempoProceso: number
+    ) {
+        this.auxTimer = this.tiempoProceso;
+    }
 
-    async triggerProcessingTimer(): Promise<void> {
-        if (this.procesoActivo != null) {
+    async ejecutarProceso(proceso: Proceso): Promise<void> {
+        this.procesoActivo = proceso;
+        if (this.procesoActivo !== null) {
             const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
             this.awake = true;
             while (this.awake) {
                 await delay(1000);
-                if (this.procesoActivo != null && !this.procesoActivo.bloqueado) {
+                if (this.procesoActivo !== null && !this.procesoActivo.bloqueado) {
                     this.auxTimer--;
-                    this.procesoActivo.countDown();
+                    this.procesoActivo.start();
                     if (this.auxTimer <= 0) {
                         this.auxTimer = this.tiempoProceso;
                         this.procesoActivo.bloquedBy = "cpu";

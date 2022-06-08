@@ -8,7 +8,7 @@ export interface IProceso {
     bloqueado: boolean;
 }
 
-export interface CPU {
+export interface ICPU {
     nombre: string;
     procesadores: Array<Procesador>;
 }

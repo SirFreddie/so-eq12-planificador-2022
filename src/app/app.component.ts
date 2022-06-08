@@ -2,8 +2,8 @@ import { Component } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Planificador } from './classes/Planificador';
 import { Proceso } from './classes/Proceso';
-import { CPU } from './interfaces/program.interface';
 import { Procesador } from './classes/Procesador';
+import { CPU } from './classes/CPU';
 
 @Component({
   selector: 'app-root',
@@ -16,39 +16,38 @@ export class AppComponent {
   programStarted: boolean = false;
 
   procesosActuales: Array<Proceso> = [];
-  procesosBloqueados: Array<Proceso> = [];
 
-  planificador: Planificador = new Planificador([]);
-
-  cpu: CPU = {
-    nombre: "CPU Principal",
-    procesadores: Array<Procesador>()
-  }
+  planificador: Planificador = new Planificador();
+  cpu: CPU = new CPU();
 
   constructor(
     private formBuilder: FormBuilder
   ) {}
 
   ngOnInit(): void {
-    setInterval(() => this.verificarProcesosPlanificador(), 1000);
-    setInterval(() => this.verificarProcesosCpu(), 1000);
-    //setInterval(() => this.entradaSalidaPeriodica(), 5000);
   }
 
+  // FORMULARIOS //
+  // Formulario de creacion de procesadores.
   programForm = this.formBuilder.group({
-    procesadores: [ null, [ Validators.required, Validators.min(1) ] ]
+    cantProcesadores: [ null, [ Validators.required, Validators.min(1) ] ],
+    tiempoProceso: [ null, [ Validators.required, Validators.min(1), Validators.max(60) ] ],
   });
 
+  // Formulario de cambio de prioridad.
   priorityForm = this.formBuilder.group({
     prioridad: [ null, [ Validators.required, Validators.min(0), Validators.max(99) ]]
   });
 
+  // Formulario de creacion de proceso.
   procesoForm = this.formBuilder.group({
     nombre: [ null, [ Validators.required ] ],
     prioridad: [ null, [ Validators.required, Validators.min(0), Validators.max(99) ]],
     tiempoEjecucion: [ null, [ Validators.required, Validators.min(0), Validators.max(60) ] ],
-    tipo: ['', Validators.required]
+    tipo: ['', Validators.required],
+    tiempoEspera: [ null, [ Validators.required, Validators.min(0), Validators.max(60) ] ]
   });
+  /////////////////
 
   iniciarPrograma() {
     if (this.programForm.invalid) {
@@ -56,76 +55,49 @@ export class AppComponent {
       return;
     }
 
-    for (let index = 0; index < this.programForm.value.procesadores!; index++) {
-      let p: Procesador = new Procesador(index.toString(), null);
-      this.cpu.procesadores.push(p);     
-    }
+    // Crea los procesadores en base al input de usuario y los agrega al cpu.
+    for (let index = 0; index < this.programForm.value.cantProcesadores!; index++) {      
+      this.cpu.agregarProcesadores(new Procesador(index.toString(), this.programForm.value.tiempoProceso!));  
+    }  
+  
+    setInterval(() => {
+      this.planificador.iniciarPlanificador(this.cpu);
+    }, 1000);
+
+    setInterval(() => {
+      this.entradaSalidaPeriodica();
+    }, 5000);
+
     this.programStarted = true;
     this.programForm.reset();
   }
 
+  // Agregar proceso a array temporal.
   agregarProceso(): void {
     if (this.procesoForm.invalid) {
       this.procesoForm.markAllAsTouched();
       return;
     }
 
+    // Crea una instancia de un proceso.
     let proceso: Proceso = new Proceso (
       this.procesoForm.value.nombre!,
       this.procesoForm.value.prioridad!,
       this.procesoForm.value.tiempoEjecucion!,
-      false,
-      this.procesoForm.value.tipo!
+      this.procesoForm.value.tipo!,
+      this.procesoForm.value.tiempoEspera!
     );
     
+    // Guarda el proceso en un array temporal.
     this.procesosActuales.push(proceso);
   }
 
+  // Agrega los procesos del array temporal al planificador.
   agregarAPlanificador(): void {
     this.procesosActuales.forEach(proceso => {
-      this.planificador.procesosListos.push(proceso);
+      this.planificador.agregarProcesoListo(proceso);
     });
-    this.procesosActuales = [];
-  }
-
-  verificarProcesosPlanificador(): void {
-    let proceso = this.planificador.procesosListos[0];
-    let insertado = false;
-    if (proceso != null) {
-      this.cpu.procesadores.forEach(procesador => {
-        if (procesador.procesoActivo == null && !insertado && !proceso.bloqueado) {
-          //proceso.triggerCountdown();
-          procesador.procesoActivo = proceso;
-          procesador.triggerProcessingTimer();
-          insertado = true;
-  
-          const index = this.planificador.procesosListos.indexOf(proceso, 0);
-          if (index > -1) {
-            this.planificador.procesosListos.splice(index, 1);
-          }
-        }
-      });
-    }
-  }
-
-  verificarProcesosCpu(): void {
-    this.cpu.procesadores.forEach(procesador => {
-      if (procesador.procesoActivo != null) {
-        if(procesador.procesoActivo.tiempoEjecucion <= 0) {
-          procesador.procesoActivo = null;   
-        }
-        if (procesador.procesoActivo != null && procesador.procesoActivo.bloqueado) {
-          if (procesador.procesoActivo.bloquedBy == "cpu") {
-            procesador.procesoActivo.bloqueado = false;
-            this.planificador.procesosListos.push(procesador.procesoActivo);
-            procesador.procesoActivo = null;
-          } else {
-            this.procesosBloqueados.push(procesador.procesoActivo);
-            procesador.procesoActivo = null;    
-          }
-        }
-      }
-    });
+    this.procesosActuales = []; // Limpia el array temporal de modo que se puedan agregar nuevos procesos.
   }
 
   bloquear(proceso: Proceso): void {
@@ -138,17 +110,7 @@ export class AppComponent {
   }
 
   desbloquear(proceso: Proceso): void {
-    this.procesosBloqueados.forEach(p => {
-      if (proceso === p) {
-        p.bloqueado = false;
-        p.bloquedBy = "";
-        const index = this.procesosBloqueados.indexOf(p, 0);
-        if (index > -1) {
-          this.procesosBloqueados.splice(index, 1);
-        }
-        this.planificador.procesosListos.push(p);
-      }
-    });
+    this.planificador.desbloquearProceso(proceso);
   }
 
   cambiarPrioridad(proceso: Proceso): void {
@@ -161,13 +123,13 @@ export class AppComponent {
 
       let aux: Array<number> = [];
       this.cpu.procesadores.forEach(procesador => {
-        if (procesador.procesoActivo != null) {
+        if (procesador.procesoActivo !== null) {
           aux.push(this.cpu.procesadores.indexOf(procesador, 0));
         }
       })
 
       let index: number = this.randomIntFromInterval(0, aux.length - 1);
-      if ( this.cpu.procesadores[index].procesoActivo != null ) {
+      if ( this.cpu.procesadores[index].procesoActivo !== null ) {
         this.cpu.procesadores[index].procesoActivo!.bloqueado = true;
         this.cpu.procesadores[index].procesoActivo!.bloquedBy = "E/S";
       }
@@ -176,15 +138,5 @@ export class AppComponent {
 
   randomIntFromInterval(min: number, max: number) { // min and max included 
     return Math.floor(Math.random() * (max - min + 1) + min)
-  }
-
-  procesosActivos(): number {
-    let result: number = 0;
-    this.cpu.procesadores.forEach(procesador => {
-      if ( procesador.procesoActivo != null ) {
-        result++;
-      }
-    });
-    return result;
   }
 }
