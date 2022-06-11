@@ -113,10 +113,6 @@ table, th, td {
             width: 50%;
             height: 50px;
         }
-
-        .locked {
-            background-color: orange;
-        }
     }
 
     .p-activos {
@@ -125,6 +121,10 @@ table, th, td {
         display: flex;
         justify-content: center;
     }
+}
+
+.locked {
+    background-color: orange;
 }
 
 .proceso-activo {
