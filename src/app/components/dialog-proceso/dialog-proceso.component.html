@@ -1,0 +1,21 @@
+<div class="container" mat-dialog-content>
+    <h1 mat-dialog-title>Proceso: {{ data.nombre }}</h1>
+    <p>Tipo: {{ data.tipo }}</p>
+    <div class="dialog-form">
+        <form [formGroup]="priorityForm"
+            (ngSubmit)="cambiarPrioridad()"
+            autocomplete="off">
+            <label>Cambiar prioridad</label>
+            <input type="number"
+                min="{{ PRIORIDAD_MIN }}"
+                max="{{ PRIORIDAD_MAX }}"
+                formControlName="prioridad"
+                placeholder="{{ data.prioridad }}">
+                <div mat-dialog-actions>
+                    <button mat-button (click)="onNoClick()">Cerrar</button>
+                    <button mat-button [disabled]="!priorityForm.valid" type="submit">Guardar</button>
+                </div>
+        </form>
+        
+    </div>
+</div>

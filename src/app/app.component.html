@@ -38,6 +38,7 @@
     
       <label>Nombre de proceso</label>
       <input type="text"
+            maxlength="8"
             formControlName="nombre"
             placeholder="Nombre de proceso">
       <br>
@@ -50,10 +51,10 @@
       <br>
       <label>Tiempo al que Espera E/S</label>
       <input type="number"
-            min="1"
+            min="0"
             max="60"
             formControlName="tiempoBloqueoPorEntradaSalida"
-            placeholder="1">
+            placeholder="0">
       <br>
       <label>Tiempo de espera E/S</label>
       <input type="number"
@@ -110,21 +111,13 @@
           <!-- <td>{{ proceso.edad }}</td> -->
           <td>{{ proceso.nombre }}</td>
           <td>{{ proceso.tipo }}</td>
-          <td class="p-form">
-            <form [formGroup]="priorityForm"
-              (ngSubmit)="cambiarPrioridad(proceso)"
-              autocomplete="off">
-              <input type="number"
-                min="{{ PRIORIDAD_MIN }}"
-                max="{{ PRIORIDAD_MAX }}"
-                formControlName="prioridad"
-                placeholder="{{ proceso.prioridad }}">
-              <button type="submit" [disabled]="!priorityForm.valid"> Guardar Prioridad </button>
-            </form>
+          <td>
+            {{ proceso.prioridad }}
+            <button (click)="openDialogProceso(proceso, planificador.procesosListos)">Modificar</button>
           </td>
           <td>{{ proceso.tiempoEjecucion }}</td>
           <td>
-            {{ proceso.bloqueado }}
+            <!-- {{ proceso.bloqueado }} -->
             <button [disabled]="proceso.bloqueado" (click)="bloquearListos(proceso)">Bloquear</button>
           </td>
         </tr>
@@ -166,17 +159,7 @@
              [ngClass]="proceso.bloqueado? '' : 'unlocked'">
           <p>Nombre: {{ proceso.nombre }}</p>
           <p>Tipo: {{ proceso.tipo }}</p>
-          <form [formGroup]="priorityForm"
-            (ngSubmit)="cambiarPrioridad(proceso)"
-            autocomplete="off">
-            <p><label>Prioridad: {{ proceso.prioridad }}</label></p>
-            <input type="number"
-              min="{{ PRIORIDAD_MIN }}"
-              max="{{ PRIORIDAD_MAX }}"
-              formControlName="prioridad"
-              placeholder="{{proceso.prioridad}}">
-            <button type="submit" [disabled]="!priorityForm.valid"> Guardar Prioridad </button>
-          </form>
+          <p>Prioridad: {{ proceso.prioridad }} <button (click)="openDialogProceso(proceso, planificador.procesosBloqueados)">Modificar</button></p>
           <p>T.Ejecucion: {{ proceso.tiempoEjecucion }}</p>
           <p>Bloqueado por: {{ proceso.bloquedBy }}</p>
           <p>Tiempo de bloqueo: {{ proceso.tiempoActualDesbloqueo }}</p>

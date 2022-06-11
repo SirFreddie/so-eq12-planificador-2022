@@ -5,6 +5,8 @@ import { Proceso } from './classes/Proceso';
 import { Procesador } from './classes/Procesador';
 import { CPU } from './classes/CPU';
 import { Constantes } from './classes/Const';
+import { MatDialog } from '@angular/material/dialog';
+import { DialogProcesoComponent } from './components/dialog-proceso/dialog-proceso.component';
 
 @Component({
   selector: 'app-root',
@@ -30,7 +32,8 @@ export class AppComponent {
   cpu: CPU = new CPU(); // Instancia del cpu.
 
   constructor(
-    private formBuilder: FormBuilder
+    private formBuilder: FormBuilder,
+    public dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -43,16 +46,11 @@ export class AppComponent {
     tiempoProceso: [ null, [ Validators.required, Validators.min(1), Validators.max(60) ] ],
   });
 
-  // Formulario de cambio de prioridad.
-  priorityForm = this.formBuilder.group({
-    prioridad: [ null, [ Validators.required, Validators.min(0), Validators.max(99) ]]
-  });
-
   // Formulario de creacion de proceso.
   procesoForm = this.formBuilder.group({
-    nombre: [ null, [ Validators.required ] ],
+    nombre: [ null, [ Validators.required, Validators.maxLength(8) ] ],
     prioridad: [ null, [ Validators.required, Validators.min(1), Validators.max(99) ]],
-    tiempoEjecucion: [ null, [ Validators.required, Validators.min(0), Validators.max(60) ] ],
+    tiempoEjecucion: [ null, [ Validators.required, Validators.min(1), Validators.max(60) ] ],
     tipo: ['', Validators.required],
     tiempoBloqueoPorEntradaSalida: [ null, [ Validators.required, Validators.min(0), Validators.max(60) ] ],
     tiempoEspera: [ null, [ Validators.required, Validators.min(0), Validators.max(60) ] ]
@@ -142,17 +140,31 @@ export class AppComponent {
     this.planificador.desbloquearProceso(proceso);
   }
 
-  // Se activa al apretar un boton.
-  // Metodo para cambiar la prioridad de un proceso.
-  cambiarPrioridad(proceso: Proceso): void {
-    proceso.prioridad = this.priorityForm.value.prioridad!; // Obtiene el valor del formulario y lo cambia.
-    this.planificador.ordenarColaListos(); // Ordena la lista de listos en base a la prioridad.
-    this.priorityForm.reset(); // Reinicia el formulario.
-  }
-
   // Logica para los radio buttons.
   cambiarTipo(): void {
     this.procesoForm.controls.prioridad.reset();
   }
+
+  // Se activa al apretar un boton.
+  // Metodo para cambiar la prioridad de un proceso.
+  openDialogProceso(proceso: Proceso, cola: Array<Proceso>): void {
+    const dialogRef = this.dialog.open(DialogProcesoComponent, {
+      width: '350px',
+      height: '350px',
+      data: { nombre: proceso.nombre, prioridad: proceso.prioridad, tipo: proceso.tipo }
+    })
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        cola.forEach(procesoActual => {
+          if(procesoActual === proceso) {
+            procesoActual.prioridad = result.prioridad;
+            this.planificador.ordenarColaListos(); // Ordena la lista de listos en base a la prioridad.
+          }
+        }); 
+      }
+    });
+  }
+
   /////////////////////////////////////
 }
