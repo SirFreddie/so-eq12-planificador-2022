@@ -1,5 +1,5 @@
 <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" target="_blank"><h1>{{ title }}</h1></a>
-<h3 *ngIf="programStarted">Programa en ejecucion...</h3>
+<h3 *ngIf="programStarted">Capybara en ejecucion...</h3>
 <hr>
 
 <div class="sect">
@@ -38,7 +38,7 @@
     
       <label>Nombre de proceso</label>
       <input type="text"
-            maxlength="8"
+            maxlength="{{ MAX_CHAR_NOMBRE }}"
             formControlName="nombre"
             placeholder="Nombre de proceso">
       <br>
