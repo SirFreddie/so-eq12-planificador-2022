@@ -6,8 +6,15 @@
             (ngSubmit)="cambiarPrioridad()"
             autocomplete="off">
             <label>Cambiar prioridad</label>
-            <input type="number"
+            <input *ngIf="data.tipo === TIPO_PROCESO_SO" 
+                type="number"
                 min="{{ PRIORIDAD_MIN }}"
+                max="{{ PRIORIDAD_MAX_SO }}"
+                formControlName="prioridad"
+                placeholder="{{ data.prioridad }}">
+            <input *ngIf="data.tipo === TIPO_PROCESO_USUARIO" 
+                type="number"
+                min="{{ PRIORIDAD_MIN_USUARIO }}"
                 max="{{ PRIORIDAD_MAX }}"
                 formControlName="prioridad"
                 placeholder="{{ data.prioridad }}">

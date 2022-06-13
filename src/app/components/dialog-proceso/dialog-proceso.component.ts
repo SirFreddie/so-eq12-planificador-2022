@@ -32,7 +32,6 @@ export class DialogProcesoComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.priorityForm.controls.prioridad.setValue(this.data.prioridad);
   }
 
   onNoClick(): void {

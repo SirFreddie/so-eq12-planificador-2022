@@ -159,6 +159,7 @@ export class AppComponent {
         cola.forEach(procesoActual => {
           if(procesoActual === proceso) {
             procesoActual.prioridad = result.prioridad;
+            procesoActual.edad = 0;
             this.planificador.ordenarColaListos(); // Ordena la lista de listos en base a la prioridad.
           }
         }); 

@@ -62,14 +62,29 @@ export class Proceso {
     // Aumenta la prioridad del proceso.
     public subirPrioridad(): void {
         this.prioridad--;
-        if (this.prioridad <= 1) {
-            this.prioridad = 1;
+        if (this.tipo === Constantes.TIPO_PROCESO.SO) {
+            if (this.prioridad <= Constantes.PRIORIDAD_MIN) {
+                this.prioridad = Constantes.PRIORIDAD_MIN;
+            }
+        } else {
+            if (this.prioridad <= Constantes.PRIORIDAD_MIN_USUARIO) {
+                this.prioridad = Constantes.PRIORIDAD_MIN_USUARIO;
+            }
         }
         this.edad = 0; // Se reinicia la edad.
     }
 
     // Aumenta la edad del proceso.
     public envejecer(): void {
+        if (this.tipo === Constantes.TIPO_PROCESO.SO) {
+            if (this.prioridad <= Constantes.PRIORIDAD_MIN) {
+                return;
+            }
+        } else {
+            if (this.prioridad <= Constantes.PRIORIDAD_MIN_USUARIO) {
+                return;
+            }
+        }
         this.edad++;
         if (this.edad >= Constantes.EDAD_MAX_ENVEJECIMIENTO) {
             this.edad = Constantes.EDAD_MAX_ENVEJECIMIENTO;
