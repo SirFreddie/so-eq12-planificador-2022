@@ -1,5 +1,5 @@
 <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" target="_blank"><h1>{{ title }}</h1></a>
-<h3 *ngIf="programStarted">Capybara en ejecucion...</h3>
+<h3 *ngIf="programStarted">Programa en ejecucion...</h3>
 <hr>
 
 <div class="sect">
@@ -106,14 +106,14 @@
           <th>T.Ejecucion</th>
           <th>Bloquear</th>
         </tr>
-        <tr *ngFor="let proceso of planificador.procesosListos; let i = index">
+        <tr *ngFor="let proceso of planificador.procesosListos.data; let i = index">
           <td>{{ i }}</td>
           <td>{{ proceso.edad }}</td>
           <td>{{ proceso.nombre }}</td>
           <td>{{ proceso.tipo }}</td>
           <td>
             {{ proceso.prioridad }}
-            <button (click)="openDialogProceso(proceso, planificador.procesosListos)">Modificar</button>
+            <button (click)="openDialogProceso(proceso, planificador.procesosListos.data)">Modificar</button>
           </td>
           <td>{{ proceso.tiempoEjecucion }}</td>
           <td>
@@ -154,12 +154,12 @@
   <div class="right" *ngIf="programStarted">
     <h1>Cantidad de Bloqueados: [ {{ planificador.procesosBloqueados.length }} ]</h1>
     <div class="activos">
-      <div *ngFor="let proceso of planificador.procesosBloqueados">
+      <div *ngFor="let proceso of planificador.procesosBloqueados.data">
         <div class="proceso"
              [ngClass]="proceso.bloqueado? '' : 'unlocked'">
           <p>Nombre: {{ proceso.nombre }}</p>
           <p>Tipo: {{ proceso.tipo }}</p>
-          <p>Prioridad: {{ proceso.prioridad }} <button (click)="openDialogProceso(proceso, planificador.procesosBloqueados)">Modificar</button></p>
+          <p>Prioridad: {{ proceso.prioridad }} <button (click)="openDialogProceso(proceso, planificador.procesosBloqueados.data)">Modificar</button></p>
           <p>T.Ejecucion: {{ proceso.tiempoEjecucion }}</p>
           <p>Bloqueado por: {{ proceso.bloquedBy }}</p>
           <p>Tiempo de bloqueo: {{ proceso.tiempoActualDesbloqueo }}</p>
