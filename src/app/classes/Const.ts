@@ -17,4 +17,6 @@ export class Constantes {
         CPU: "Cpu",
         NONE: "NONE"
     }
+
+    public static MAX_CHAR_NOMBRE: number = 32;
 }

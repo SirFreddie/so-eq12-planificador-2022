@@ -14,9 +14,10 @@ import { DialogProcesoComponent } from './components/dialog-proceso/dialog-proce
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title = 'Equipo 12 - Planificador de Procesos - 2022';
+  title = 'S.O. - Equipo 12 - Planificador de Procesos - 2022';
 
   // Constantes //
+  MAX_CHAR_NOMBRE: number = Constantes.MAX_CHAR_NOMBRE;
   PRIORIDAD_MIN: number = Constantes.PRIORIDAD_MIN;
   PRIORIDAD_MAX: number = Constantes.PRIORIDAD_MAX;
   PRIORIDAD_MAX_SO: number = Constantes.PRIORIDAD_MAX_SO;
@@ -160,7 +161,7 @@ export class AppComponent {
           if(procesoActual === proceso) {
             procesoActual.prioridad = result.prioridad;
             procesoActual.edad = 0;
-            this.planificador.ordenarColaListos(); // Ordena la lista de listos en base a la prioridad.
+            this.planificador.procesosListos.ordenarCola(); // Ordena la lista de listos en base a la prioridad.
           }
         }); 
       }
