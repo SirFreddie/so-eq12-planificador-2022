@@ -14,10 +14,13 @@ export class Planificador {
   ) {}
 
   // Ejecuta la funcionalidad del planificador cada x tiempo.
-  public iniciarPlanificador(cpu: CPU): void {
+  public ejecutarPlanificador(cpu: CPU): void {
+    // Ejecuta cada 1 segundo.
+    setInterval(() => {
       this.gestionarProcesosListos(cpu); // Gestiona los procesos en la cola de listos.
       this.gestionarProcesosEnCpu(cpu); // Gestiona los procesos activos en CPU.
       this.gestionarProcesosBloqueados(); // Gestiona los procesos en la cola de bloqueados.
+    }, 1000);
   }
 
   // GETTERS //

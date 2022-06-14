@@ -43,8 +43,8 @@ export class AppComponent {
   //// FORMULARIOS ////
   // Formulario de creacion de procesadores.
   programForm = this.formBuilder.group({
-    cantProcesadores: [ null, [ Validators.required, Validators.min(1) ] ],
-    tiempoProceso: [ null, [ Validators.required, Validators.min(1), Validators.max(60) ] ],
+    cantProcesadores: [ 1, [ Validators.required, Validators.min(1) ] ],
+    tiempoProceso: [ 1, [ Validators.required, Validators.min(1), Validators.max(60) ] ],
   });
 
   // Formulario de creacion de proceso.
@@ -72,10 +72,8 @@ export class AppComponent {
       this.cpu.agregarProcesadores(new Procesador(index.toString(), this.programForm.value.tiempoProceso!));  
     }  
   
-    // Inicializa el timer global del planificador.
-    setInterval(() => {
-      this.planificador.iniciarPlanificador(this.cpu);
-    }, 1000);
+    // Inicializa el timer global del planificador y sus procesos.
+    this.planificador.ejecutarPlanificador(this.cpu);
 
     this.programStarted = true;
     this.programForm.reset();
