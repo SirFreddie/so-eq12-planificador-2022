@@ -12,20 +12,19 @@
         autocomplete="off">
         <div class="form-element">
           <label>Cantidad de Procesadores</label>
-          <input type="range"
+          <input type="number"
                 min="1"
                 max="12"
                 formControlName="cantProcesadores"
-                step="1"
-                placeholder="1">{{ programForm.controls.cantProcesadores.value }}
+                placeholder="1">
         </div>
         <div class="form-element">
           <label>Tiempo de Ejecucion de Procesos</label>
-          <input type="range"
+          <input type="number"
                 min="1"
                 max="60"
                 formControlName="tiempoProceso"
-                placeholder="1">{{ programForm.controls.tiempoProceso.value }}s
+                placeholder="1">
         </div>
       
         <button type="submit" [disabled]="!programForm.valid || programStarted"> Iniciar </button>

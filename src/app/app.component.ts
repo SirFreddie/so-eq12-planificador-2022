@@ -43,18 +43,18 @@ export class AppComponent {
   //// FORMULARIOS ////
   // Formulario de creacion de procesadores.
   programForm = this.formBuilder.group({
-    cantProcesadores: [ 1, [ Validators.required, Validators.min(1) ] ],
-    tiempoProceso: [ 1, [ Validators.required, Validators.min(1), Validators.max(60) ] ],
+    cantProcesadores: [ null, [ Validators.required, Validators.min(1), Validators.pattern("^[0-9]*$") ] ],
+    tiempoProceso: [ null, [ Validators.required, Validators.min(1), Validators.max(60), Validators.pattern("^[0-9]*$") ] ],
   });
 
   // Formulario de creacion de proceso.
   procesoForm = this.formBuilder.group({
     nombre: [ null, [ Validators.required, Validators.maxLength(8) ] ],
-    prioridad: [ null, [ Validators.required, Validators.min(1), Validators.max(99) ]],
-    tiempoEjecucion: [ null, [ Validators.required, Validators.min(1), Validators.max(60) ] ],
+    prioridad: [ null, [ Validators.required, Validators.min(1), Validators.max(99), Validators.pattern("^[0-9]*$") ]],
+    tiempoEjecucion: [ null, [ Validators.required, Validators.min(1), Validators.max(60), Validators.pattern("^[0-9]*$") ] ],
     tipo: ['', Validators.required],
-    tiempoBloqueoPorEntradaSalida: [ null, [ Validators.required, Validators.min(0), Validators.max(60) ] ],
-    tiempoEspera: [ null, [ Validators.required, Validators.min(0), Validators.max(60) ] ]
+    tiempoBloqueoPorEntradaSalida: [ null, [ Validators.required, Validators.min(0), Validators.max(60) , Validators.pattern("^[0-9]*$")] ],
+    tiempoEspera: [ null, [ Validators.required, Validators.min(0), Validators.max(60), Validators.pattern("^[0-9]*$") ] ]
   });
   /////////////////////
 

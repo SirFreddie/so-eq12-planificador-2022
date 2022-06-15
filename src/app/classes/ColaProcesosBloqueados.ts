@@ -10,19 +10,19 @@ export class ColaProcesosBloqueados extends TColaArray<Proceso> {
     public ordenarCola(): void {
         this._data.sort(function(procesoA, procesoB){
             if (procesoA.bloquedBy === procesoB.bloquedBy) {
-            if (procesoA.tiempoActualDesbloqueo < procesoB.tiempoActualDesbloqueo) {
-                return -1;
-            } else if (procesoA.tiempoActualDesbloqueo > procesoB.tiempoActualDesbloqueo) {
-                return 1;
+                if (procesoA.tiempoActualDesbloqueo < procesoB.tiempoActualDesbloqueo) {
+                    return -1;
+                } else if (procesoA.tiempoActualDesbloqueo > procesoB.tiempoActualDesbloqueo) {
+                    return 1;
+                } else {
+                    return 0;
+                }
             } else {
-                return 0;
-            }
-            } else {
-            if (procesoA.bloquedBy === Constantes.TIPO_BLOQUEO.ES && procesoB.bloquedBy === Constantes.TIPO_BLOQUEO.USUARIO ) {
-                return -1;
-            } else if (procesoA.bloquedBy === Constantes.TIPO_BLOQUEO.USUARIO && procesoB.bloquedBy === Constantes.TIPO_BLOQUEO.ES) {
-                return 1;
-            }
+                if (procesoA.bloquedBy === Constantes.TIPO_BLOQUEO.ES && procesoB.bloquedBy === Constantes.TIPO_BLOQUEO.USUARIO ) {
+                    return -1;
+                } else if (procesoA.bloquedBy === Constantes.TIPO_BLOQUEO.USUARIO && procesoB.bloquedBy === Constantes.TIPO_BLOQUEO.ES) {
+                    return 1;
+                }
             }
             return 0;
         });

@@ -22,7 +22,7 @@ export class DialogProcesoComponent implements OnInit {
 
   // Formulario de cambio de prioridad.
   priorityForm = this.formBuilder.group({
-    prioridad: [ null, [ Validators.required, Validators.min(0), Validators.max(99) ]]
+    prioridad: [ null, [ Validators.required, Validators.min(0), Validators.max(99), Validators.pattern("^[0-9]*$") ]]
   });
 
   constructor(
