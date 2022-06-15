@@ -92,7 +92,7 @@ export class Proceso {
     }
 
     // Inicia el desbloqueo del proceso por E/S.
-    public async desbloquearse(): Promise<void> {
+    public async timerDesbloqueo(): Promise<void> {
         this._awake = true;
         // Si esta despierto.
         while (this._awake) {

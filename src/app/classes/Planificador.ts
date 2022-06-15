@@ -124,7 +124,7 @@ export class Planificador {
             procesador.liberar(); // Libera el procesador para que netre un nuevo proceso.
             return;
           } else if (procesador.procesoActivo.bloquedBy === Constantes.TIPO_BLOQUEO.ES) { // Si el proceso fue bloqueado por E/S.
-            procesador.procesoActivo.desbloquearse(); // Inicia la cuenta regresiva de desbloqueo.
+            procesador.procesoActivo.timerDesbloqueo(); // Inicia la cuenta regresiva de desbloqueo.
             this._procesosBloqueados.agregarElemento(procesador.procesoActivo); // Agrega el proceso a la cola de bloqueados.
             procesador.liberar(); // Libera el CPU.
             return;
