@@ -9,6 +9,7 @@ export class Planificador {
   private _procesosListos: ColaProcesosListos = new ColaProcesosListos(); // Cola de procesos listos.
   private _procesosBloqueados: ColaProcesosBloqueados = new ColaProcesosBloqueados(); // Cola de procesos bloqueados.
   private _procesosFinalizados: Array<any> = []; // Procesos finalizados.
+  private ultimaID: number = 0; // Ultima ID utilizada.
 
   constructor(       
   ) {}
@@ -31,6 +32,11 @@ export class Planificador {
   // Agrega un proceso a la cola de listos.
   public agregarProcesoListo(proceso: Proceso): void {
     proceso.edad = 0; // Se reinicia la edad del proceso.
+    // Si no tiene id, se le asigna una.
+    if (!proceso.id) {
+      proceso.id = this.ultimaID.toString();
+      this.ultimaID++;
+    }
     this._procesosListos.agregarElemento(proceso); // Agrega el proceso a la cola.
     this._procesosListos.ordenarCola(); // Reordena la cola de listos.
   }
@@ -109,7 +115,7 @@ export class Planificador {
         if(procesador.procesoActivo.tiempoEjecucion <= 0) {
           // Agrega el proceso a una lista de finalizados. Crea un objeto temporal con datos del proceso.
           this._procesosFinalizados.push({ 
-            nombre: procesador.procesoActivo.nombre,
+            id: procesador.procesoActivo.id,
             tipo: procesador.procesoActivo.tipo,
             });
           procesador.liberar();  // Lo quita del procesador.  

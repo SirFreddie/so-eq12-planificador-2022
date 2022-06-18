@@ -49,7 +49,7 @@ export class AppComponent {
 
   // Formulario de creacion de proceso.
   procesoForm = this.formBuilder.group({
-    nombre: [ null, [ Validators.required, Validators.maxLength(8) ] ],
+    id: [ null, [ Validators.maxLength(8) ] ],
     prioridad: [ null, [ Validators.required, Validators.min(1), Validators.max(99), Validators.pattern("^[0-9]*$") ]],
     tiempoEjecucion: [ null, [ Validators.required, Validators.min(1), Validators.max(60), Validators.pattern("^[0-9]*$") ] ],
     tipo: ['', Validators.required],
@@ -92,7 +92,7 @@ export class AppComponent {
 
     // Crea una instancia de un proceso.
     let proceso: Proceso = new Proceso (
-      this.procesoForm.value.nombre!,
+      this.procesoForm.value.id!,
       this.procesoForm.value.prioridad!,
       this.procesoForm.value.tiempoEjecucion!,
       this.procesoForm.value.tipo!,
@@ -150,7 +150,7 @@ export class AppComponent {
     const dialogRef = this.dialog.open(DialogProcesoComponent, {
       width: '350px',
       height: '350px',
-      data: { nombre: proceso.nombre, prioridad: proceso.prioridad, tipo: proceso.tipo }
+      data: { nombre: proceso.id, prioridad: proceso.prioridad, tipo: proceso.tipo }
     })
 
     dialogRef.afterClosed().subscribe(result => {
@@ -164,6 +164,10 @@ export class AppComponent {
         }); 
       }
     });
+  }
+
+  goToRepo(): void {
+    window.open(Constantes.REPO_LINK, "_blank");
   }
 
   /////////////////////////////////////

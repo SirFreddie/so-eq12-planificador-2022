@@ -13,7 +13,7 @@ export class Proceso {
 
 
     constructor(
-        public nombre: string,
+        public id: string,
         public prioridad: number,
         public tiempoEjecucion: number,
         public tipo: string,

@@ -1,4 +1,6 @@
 export class Constantes {
+    public static REPO_LINK: string = 'https://github.com/SirFreddie/so-eq12-planificador-2022';
+
     public static PRIORIDAD_MIN: number = 1;
     public static PRIORIDAD_MAX: number = 99;
     public static PRIORIDAD_MAX_SO: number = 50;
