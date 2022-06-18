@@ -1,5 +1,9 @@
-<a href="" target="_blank"><h1>{{ title }}</h1></a>
-<h3 *ngIf="programStarted">Programa en ejecucion...</h3>
+<header>
+  <a href="" target="_blank"><h1>{{ title }}</h1></a>
+  <h3 *ngIf="programStarted">Programa en ejecucion...</h3>
+  <button (click)="goToRepo()">Ir al Repositorio</button>
+</header>
+
 <hr>
 
 <div class="sect">
@@ -16,7 +20,8 @@
                 min="1"
                 max="12"
                 formControlName="cantProcesadores"
-                placeholder="1">
+                ngClass="programForm.controls.cantProcesadores.valid ? 'isValid' : 'invalid'"
+                placeholder="1"><small style="color:rgb(248, 78, 78)">* De 1 a 12 sin decimales.</small>
         </div>
         <div class="form-element">
           <label>Tiempo de Ejecucion de Procesos</label>
@@ -24,10 +29,12 @@
                 min="1"
                 max="60"
                 formControlName="tiempoProceso"
-                placeholder="1">
+                placeholder="1"><small style="color:rgb(248, 78, 78)">* De 1 a 60 sin decimales.</small>
         </div>
       
         <button type="submit" [disabled]="!programForm.valid || programStarted"> Iniciar </button>
+        <br>
+        <small style="color:rgb(248, 78, 78)">Todos los campos requeridos (*) deben ser completados y validos.</small>
       </form>
     </div>
     
@@ -36,55 +43,65 @@
         (ngSubmit)="agregarProceso()"
         autocomplete="off">
     
-      <label>Nombre de proceso</label>
+      <label>Identificador de proceso</label>
       <input type="text"
             maxlength="{{ MAX_CHAR_NOMBRE }}"
-            formControlName="nombre"
-            placeholder="Nombre de proceso">
+            formControlName="id"
+            placeholder="ID de proceso">
       <br>
       <label>Tiempo de ejecucion</label>
       <input type="number"
             min="1"
             max="60"
             formControlName="tiempoEjecucion"
-            placeholder="1">s
+            placeholder="1"><small style="color:rgb(248, 78, 78)">* De 1s a 60s sin decimales.</small>
       <br>
       <label>Tiempo al que Espera E/S</label>
       <input type="number"
             min="0"
             max="60"
             formControlName="tiempoBloqueoPorEntradaSalida"
-            placeholder="0">
+            placeholder="0"><small style="color:rgb(248, 78, 78)">* De 0s (sin E/S) a 60s sin decimales.</small>
       <br>
       <label>Tiempo de espera E/S</label>
       <input type="number"
             min="1"
             max="60"
             formControlName="tiempoEspera"
-            placeholder="1">s
+            placeholder="1"><small style="color:rgb(248, 78, 78)">* De 1s a 60s sin decimales.</small>
       <br>
       <label>Tipo de Proceso</label>
         <input (click)="cambiarTipo()" name="tipo" type="radio" value='{{ TIPO_PROCESO_SO }}' formControlName="tipo" >S.O.
         <input (click)="cambiarTipo()" name="tipo" type="radio" value='{{ TIPO_PROCESO_USUARIO }}' formControlName="tipo">Usuario
+        <small style="color:rgb(248, 78, 78)">*</small>
       <br>
 
-      <label *ngIf="procesoForm.value.tipo">Prioridad de proceso</label>
+      <div style="display: flex;">
+        <label *ngIf="procesoForm.value.tipo">Prioridad de proceso</label>
 
-      <input *ngIf="procesoForm.value.tipo === TIPO_PROCESO_SO" 
-            type="number"
-            min="{{ PRIORIDAD_MIN }}"
-            max="{{ PRIORIDAD_MAX_SO }}"
-            formControlName="prioridad"
-            placeholder="{{ PRIORIDAD_MIN }}">
-      <input *ngIf="procesoForm.value.tipo === TIPO_PROCESO_USUARIO" 
-            type="number"
-            min="{{ PRIORIDAD_MIN_USUARIO }}"
-            max="{{ PRIORIDAD_MAX }}"
-            formControlName="prioridad"
-            placeholder="{{ PRIORIDAD_MIN_USUARIO }}">
+        <div *ngIf="procesoForm.value.tipo === TIPO_PROCESO_SO">
+          <input 
+          type="number"
+          min="{{ PRIORIDAD_MIN }}"
+          max="{{ PRIORIDAD_MAX_SO }}"
+          formControlName="prioridad"
+          placeholder="{{ PRIORIDAD_MIN }}"><small style="color:rgb(248, 78, 78)">* De {{ PRIORIDAD_MIN }} a {{ PRIORIDAD_MAX_SO }} sin decimales.</small>
+        </div>
+        <div *ngIf="procesoForm.value.tipo === TIPO_PROCESO_USUARIO">
+          <input  
+          type="number"
+          min="{{ PRIORIDAD_MIN_USUARIO }}"
+          max="{{ PRIORIDAD_MAX }}"
+          formControlName="prioridad"
+          placeholder="{{ PRIORIDAD_MIN_USUARIO }}"><small style="color:rgb(248, 78, 78)">* De {{ PRIORIDAD_MIN_USUARIO }} a {{ PRIORIDAD_MAX }} sin decimales.</small>
+        </div>
+      </div>
+      
       <br>
 
       <button type="submit" [disabled]="!procesoForm.valid"> Agregar Proceso </button>
+      <br>
+      <small style="color:rgb(248, 78, 78)">Todos los campos requeridos (*) deben ser completados y validos.</small>
       </form>
     </div>
 
@@ -99,25 +116,24 @@
       <table>
         <tr>
           <th>Posicion</th>
-          <th>Edad</th>
-          <th>Nombre</th>
+          <th>ID</th>
           <th>Tipo</th>
           <th>Prioridad</th>
+          <th>Edad</th>
           <th>T.Ejecucion</th>
           <th>Bloquear</th>
         </tr>
         <tr *ngFor="let proceso of planificador.procesosListos.data; let i = index">
           <td>{{ i }}</td>
-          <td>{{ proceso.edad }}</td>
-          <td>{{ proceso.nombre }}</td>
+          <td>{{ proceso.id }}</td>
           <td>{{ proceso.tipo }}</td>
           <td>
             {{ proceso.prioridad }}
             <button (click)="openDialogProceso(proceso, planificador.procesosListos.data)">Modificar</button>
           </td>
+          <td>{{ proceso.edad }}</td>
           <td>{{ proceso.tiempoEjecucion }}</td>
           <td>
-            <!-- {{ proceso.bloqueado }} -->
             <button [disabled]="proceso.bloqueado" (click)="bloquearListos(proceso)">Bloquear</button>
           </td>
         </tr>
@@ -140,7 +156,7 @@
         <h3>CPU {{ procesador.nombre }}:[ {{procesador.quantumRestante}}s ]</h3>
         <div class="p-activos">
           <div *ngIf="procesador.procesoActivo != null" class="proceso">
-            <p>Nombre: {{ procesador.procesoActivo.nombre }}</p>
+            <p>ID: {{ procesador.procesoActivo.id }}</p>
             <p>Tipo: {{ procesador.procesoActivo.tipo }}</p>
             <p>Prioridad: {{ procesador.procesoActivo.prioridad }}</p>
             <p>T.Ejecucion: {{ procesador.procesoActivo.tiempoEjecucion }}s</p>
@@ -157,7 +173,7 @@
       <div *ngFor="let proceso of planificador.procesosBloqueados.data">
         <div class="proceso"
              [ngClass]="proceso.bloqueado? '' : 'unlocked'">
-          <p>Nombre: {{ proceso.nombre }}</p>
+          <p>ID: {{ proceso.id }}</p>
           <p>Tipo: {{ proceso.tipo }}</p>
           <p>Prioridad: {{ proceso.prioridad }} <button (click)="openDialogProceso(proceso, planificador.procesosBloqueados.data)">Modificar</button></p>
           <p>T.Ejecucion: {{ proceso.tiempoEjecucion }}</p>
@@ -178,11 +194,11 @@
     <div class="table-container">
       <table>
         <tr>
-          <th>Nombre</th>
+          <th>ID</th>
           <th>Tipo</th>
         </tr>
         <tr *ngFor="let proceso of planificador.procesosFinalizados">
-          <td>{{ proceso.nombre }}</td>
+          <td>{{ proceso.id }}</td>
           <td>{{ proceso.tipo }}</td>
         </tr>
       </table>

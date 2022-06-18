@@ -158,3 +158,14 @@ table, th, td {
     color: rgb(207, 45, 45);
     font-size: small;
 }
+
+header {
+    padding-top: 15px;
+    display: flex;
+    justify-content: space-evenly;
+
+    button {
+        width: 150px;
+        height: 50px;
+    }
+}
