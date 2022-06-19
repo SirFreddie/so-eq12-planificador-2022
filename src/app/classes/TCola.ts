@@ -1,5 +1,5 @@
 // Clase abstracta que representa una cola generica utilizando una estructura de array.
-export abstract class TColaArray<T>{
+export abstract class TCola<T>{
 
     protected _data: Array<T> = [];
 

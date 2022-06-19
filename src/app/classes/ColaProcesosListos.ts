@@ -1,9 +1,9 @@
-import { TColaArray } from "./TColaArray";
+import { TCola } from "./TCola";
 import { Constantes } from "./Const";
 import { Proceso } from "./Proceso";
 
 // Clase que representa la cola de procesos listos.
-export class ColaProcesosListos extends TColaArray<Proceso> {
+export class ColaProcesosListos extends TCola<Proceso> {
 
     // Ordena la cola de listos en base a la prioridad y al tipo de proceso.
     // Si devuelve 0, se mantiene el orden, si devuelve -1 procesoA va antes que procesoB, si devuelve 1 procesoB va antes que procesoA.
