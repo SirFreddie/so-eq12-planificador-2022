@@ -4,6 +4,15 @@ Trabajo obligatorio para Sistemas Operativos, 3er semestre, Ingenieria en Inform
 
 Enlace al deploy de la aplicacion: [Equipo 12 - Planificador](https://planificador-capybara.netlify.app)
 
+## ¿Donde estan las clases desarrolladas?
+Las clases desarrolladas se encuentran en el directorio `src/app/classes`.
+Se puede acceder a las clases [AQUI](/src/app/classes/).
+
+## ¿Donde se ejecuta el programa?
+El programa se ejecuta en el archivo `app.component.ts` dentro de la carpeta `src/app/app.component.ts`.
+Los estilos estan en el archivo `app.component.scss`.
+La estructura HTML esta en el archivo `app.component.html`.
+
 ## Versiones
     Angular CLI: 14.0.0
     Node: 16.15.1

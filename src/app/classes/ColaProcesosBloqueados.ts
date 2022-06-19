@@ -1,9 +1,9 @@
-import { TColaArray } from "./TColaArray";
+import { TCola } from "./TCola";
 import { Constantes } from "./Const";
 import { Proceso } from "./Proceso";
 
 // Clase que representa la cola de procesos bloqueados.
-export class ColaProcesosBloqueados extends TColaArray<Proceso> {
+export class ColaProcesosBloqueados extends TCola<Proceso> {
 
     // Ordena la cola de bloqueados en base al tipo de bloqueo y a su tiempo actual de desbloqueo.
     // De modo que indica quien sera el proximo en desbloquearse.
